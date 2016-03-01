@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/txNamePlayerA"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+
+        android:text="Name Player A"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/edNamePlayerA"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txNamePlayerA"
+        android:layout_below="@+id/txNamePlayerA"
+        android:layout_marginRight="10dp"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/txNamePlayerB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/edNamePlayerA"
+        android:layout_below="@+id/edNamePlayerA"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
+
+        android:text="Name Player B"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/edNamePlayerB"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txNamePlayerB"
+        android:layout_below="@+id/txNamePlayerB"
+        android:layout_marginRight="10dp"
+        android:inputType="text" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/edNamePlayerB"
+        android:layout_marginTop="10dp"
+        android:background="#C4C4C4"
+        android:orientation="horizontal"
+        android:paddingTop="4dp">
+
+        <Button
+            android:id="@+id/btStarRound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Start Round" />
+    </LinearLayout>
+
+</RelativeLayout>
