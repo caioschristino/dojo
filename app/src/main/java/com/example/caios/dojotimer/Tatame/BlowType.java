@@ -80,6 +80,33 @@ public class BlowType {
             }
         };
     }
+
+    public static IBlow addTwoPoints() {
+        return new IBlow() {
+            @Override
+            public int attack() {
+                return 2;
+            }
+        };
+    }
+
+    public static IBlow addThreePoints() {
+        return new IBlow() {
+            @Override
+            public int attack() {
+                return 3;
+            }
+        };
+    }
+
+    public static IBlow addFourPoints() {
+        return new IBlow() {
+            @Override
+            public int attack() {
+                return 4;
+            }
+        };
+    }
 }
 
 

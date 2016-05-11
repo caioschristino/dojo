@@ -2,13 +2,11 @@ package com.example.caios.dojotimer;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -16,11 +14,10 @@ import com.example.caios.dojotimer.Models.Player;
 import com.example.caios.dojotimer.Models.Round;
 import com.example.caios.dojotimer.Persistence.Controller.History;
 import com.example.caios.dojotimer.Persistence.DatabaseManager;
+import com.example.caios.dojotimer.Tatame.Adapter.HistoryRecycleViewAdapter;
+import com.example.caios.dojotimer.Tatame.Interface.IClickListener;
 import com.example.caios.dojotimer.Tatame.RoundFight;
-import com.example.caios.dojotimer.Tatame.Stopwatch;
-import com.j256.ormlite.dao.CloseableIterator;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,53 +30,53 @@ public class StartRoundActivity extends AppCompatActivity {
     private TextView txChronometer;
     private long timeRound;
     private History history;
-    private Button btConsulta;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.start_round);
+        setContentView(R.layout.startround_main);
         DatabaseManager.init(this);
-
-        edNamePLayerA = (EditText) findViewById(R.id.edNamePlayerA);
-        edNamePLayerB = (EditText) findViewById(R.id.edNamePlayerB);
-        txChronometer = (TextView) findViewById(R.id.txChronometer);
-
         history = new History(this);
+//
+//        edNamePLayerA = (EditText) findViewById(R.id.edNamePlayerA);
+//        edNamePLayerB = (EditText) findViewById(R.id.edNamePlayerB);
+//        txChronometer = (TextView) findViewById(R.id.txChronometer);
+//        findViewById(R.id.llMinusTime).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (timeRound > 0) {
+//                    timeRound--;
+//                    updateTimeValue(timeRound);
+//                }
+//            }
+//        });
+//
+//        findViewById(R.id.llPlusTime).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                timeRound++;
+//                updateTimeValue(timeRound);
+//            }
+//        });
+//
+//        findViewById(R.id.llNewRound).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                startNewRound(edNamePLayerA.getText().toString(), edNamePLayerB.getText().toString());
+//            }
+//        });
 
-        findViewById(R.id.btRemoveTime).setOnClickListener(new View.OnClickListener() {
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        HistoryRecycleViewAdapter adapter = new HistoryRecycleViewAdapter(history.getAllRouds(), new IClickListener() {
             @Override
-            public void onClick(View v) {
-                if (timeRound > 0) {
-                    timeRound--;
-                    updateTimeValue(timeRound);
-                }
+            public void onClickItem(Round r) {
+                Snackbar.make(recyclerView, "Tap on: " + r.getTimeRound(), Snackbar.LENGTH_SHORT).show();
             }
         });
 
-        findViewById(R.id.btAddTime).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                timeRound++;
-                updateTimeValue(timeRound);
-            }
-        });
-
-        findViewById(R.id.btNewRound).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startNewRound(edNamePLayerA.getText().toString(), edNamePLayerB.getText().toString());
-            }
-        });
-
-        btConsulta = (Button) findViewById(R.id.btConsulta);
-        btConsulta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(StartRoundActivity.this, HistoryRoundActivity.class);
-                startActivity(intent);
-            }
-        });
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
     }
 
     private void updateTimeValue(long time) {
@@ -107,15 +104,15 @@ public class StartRoundActivity extends AppCompatActivity {
                 || leftPlayer.getName() == null
                 || leftPlayer.getName().isEmpty()) {
             isValid = false;
-            Snackbar.make(btConsulta, "Adicione um nome ao Lutador B", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(recyclerView, "Adicione um nome ao Lutador B", Snackbar.LENGTH_SHORT).show();
         } else if (rightPlayer == null
                 || rightPlayer.getName() == null
                 || rightPlayer.getName().isEmpty()) {
             isValid = false;
-            Snackbar.make(btConsulta, "Adicione um nome ao Lutador A", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(recyclerView, "Adicione um nome ao Lutador A", Snackbar.LENGTH_SHORT).show();
         } else if (timeRoundFormated == 0) {
             isValid = false;
-            Snackbar.make(btConsulta, "Tempo de luta inválido", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(recyclerView, "Tempo de luta inválido", Snackbar.LENGTH_SHORT).show();
         }
         return isValid;
     }

@@ -2,6 +2,7 @@ package com.example.caios.dojotimer;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -29,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             textAdvantagePlayerB, textPenaltyPlayerB, txChronometer, txNamePlayerB, txNamePlayerA;
 
 
-    private Button btPausePlay, btReset;
+    private LinearLayout llPausePlay, llReset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,26 +52,27 @@ public class MainActivity extends AppCompatActivity {
         setCurrentRound();
         startChronometer();
 
-        btPausePlay = (Button) findViewById(R.id.btPausePlay);
-        btPausePlay.setOnClickListener(new View.OnClickListener() {
+        llPausePlay = (LinearLayout) findViewById(R.id.llPausePlay);
+        llPausePlay.setOnClickListener(new View.OnClickListener() {
             @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
+                ImageView pauseplay = (ImageView) findViewById(R.id.ivPausePlay);
                 if (roundFight.isStopped()) {
-                    btPausePlay.setBackground(getDrawable(R.drawable.play_timer));
+                    pauseplay.setImageResource(R.drawable.ic_play);
                     resetScoreboard(roundFight);
                     enableButtonsToIncrementScore(true);
                     roundFight.startTime();
                 } else {
-                    btPausePlay.setBackground(getDrawable(R.drawable.pause_timer));
+                    pauseplay.setImageResource(R.drawable.ic_pause);
                     enableButtonsToIncrementScore(false);
                     roundFight.stopTime();
                 }
             }
         });
 
-        btReset = (Button) findViewById(R.id.btReset);
-        btReset.setOnClickListener(new View.OnClickListener() {
+        llReset = (LinearLayout) findViewById(R.id.llReset);
+        llReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetRound();
@@ -97,40 +101,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickPlayerB(View v) {
-        boolean isAPoint = true;
-        try {
-            final int id = v.getId();
-            switch (id) {
-                case R.id.btMountedPlayerB:
-                    roundFight.getLeftPlayer().addAttack(BlowType.mountedPlayer());
-                    break;
-                case R.id.btFootprintPlayerB:
-                    roundFight.getLeftPlayer().addAttack(BlowType.footprintPlayer());
-                    break;
-                case R.id.btCrossingGuardPlayerB:
-                    roundFight.getLeftPlayer().addAttack(BlowType.crossingGuardPlayer());
-                    break;
-                case R.id.btTumblePlayerB:
-                    roundFight.getLeftPlayer().addAttack(BlowType.tumblePlayer());
-                    break;
-                case R.id.btScrapePlayerB:
-                    roundFight.getLeftPlayer().addAttack(BlowType.scrapePlayer());
-                    break;
-                case R.id.btKneeInBellyPlayerB:
-                    roundFight.getLeftPlayer().addAttack(BlowType.kneeInBellyPlayer());
-                    break;
-                case R.id.btPunishmentsPlayerB:
-                    roundFight.addPenalty(roundFight.getLeftPlayer());
-                    isAPoint = false;
-                    break;
-                case R.id.btAdvantagesPlayerB:
-                    roundFight.addAdvantage(roundFight.getLeftPlayer());
-                    isAPoint = false;
-                    break;
-            }
-        } catch (final Exception e) {
-
-        }
+        final int id = v.getId();
+        boolean isAPoint = validAttack(id, roundFight.getLeftPlayer());
         if (isAPoint) {
             roundFight.addPoint(roundFight.getLeftPlayer());
         }
@@ -138,45 +110,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickPlayerA(View v) {
+        final int id = v.getId();
+        boolean isAPoint = validAttack(id, roundFight.getRightPlayer());
+
+        if (isAPoint) {
+            roundFight.addPoint(roundFight.getRightPlayer());
+        }
+        updateScore();
+    }
+
+    private boolean validAttack(int id, Player p) {
         boolean isAPoint = true;
         try {
-            final int id = v.getId();
             switch (id) {
-                case R.id.btMountedPlayerA:
-                    roundFight.getRightPlayer().addAttack(BlowType.mountedPlayer());
+                case R.id.fabFourpointsPlayerA:
+                    p.addAttack(BlowType.addFourPoints());
+                case R.id.fabThreepointsPlayerA:
+                    p.addAttack(BlowType.addThreePoints());
+                case R.id.fabTwopointsPlayerA:
+                    p.addAttack(BlowType.addTwoPoints());
                     break;
-                case R.id.btFootprintPlayerA:
-                    roundFight.getRightPlayer().addAttack(BlowType.footprintPlayer());
-                    break;
-                case R.id.btCrossingGuardPlayerA:
-                    roundFight.getRightPlayer().addAttack(BlowType.crossingGuardPlayer());
-                    break;
-                case R.id.btTumblePlayerA:
-                    roundFight.getRightPlayer().addAttack(BlowType.tumblePlayer());
-                    break;
-                case R.id.btScrapePlayerA:
-                    roundFight.getRightPlayer().addAttack(BlowType.scrapePlayer());
-                    break;
-                case R.id.btKneeInBellyPlayerA:
-                    roundFight.getRightPlayer().addAttack(BlowType.kneeInBellyPlayer());
-                    break;
-                case R.id.btPunishmentsPlayerA:
-                    roundFight.addPenalty(roundFight.getRightPlayer());
+                case R.id.fabPunishmentsPlayerA:
+                    roundFight.addPenalty(p);
                     isAPoint = false;
                     break;
-                case R.id.btAdvantagesPlayerA:
-                    roundFight.addAdvantage(roundFight.getRightPlayer());
+                case R.id.fabAdvantagesPlayerA:
+                    roundFight.addAdvantage(p);
                     isAPoint = false;
                     break;
             }
         } catch (final Exception e) {
 
         }
-
-        if (isAPoint) {
-            roundFight.addPoint(roundFight.getRightPlayer());
-        }
-        updateScore();
+        return isAPoint;
     }
 
     private void saveRoundFight(RoundFight roundFight) {
